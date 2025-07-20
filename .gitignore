@@ -1,0 +1,8 @@
+/obj/*.json
+/obj/*.props
+/obj/*.targets
+/obj/Debug/net9.0/*.cs
+/obj/Debug/net9.0/*.cache
+/obj/Debug/net9.0/*.editorconfig
+/obj/Debug/net9.0/*.txt
+/obj/Debug/net9.0/*.json

@@ -1,21 +1,31 @@
-version: "3.8"
-
 services:
-  polymorphicapi:
-    build: .
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aspnetcoreapi:latest
     ports:
       - "5000:80"
+    volumes:
+      - ./src:/app
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Data Source=polymorphicdb.db
+      - ConnectionStrings__SQLite=/app/db/mydb.sqlite
+    networks:
+      - app-network
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: dotnet test /app/AspNetCoreApi.Tests/AspNetCoreApi.Tests.csproj
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Test
+    networks:
+      - app-network
     depends_on:
-      - db
+      - app
 
-  db:
-    image: nouchka/sqlite
-    container_name: sqlite_db
-    volumes:
-      - polymorphicdb:/data
-
-volumes:
-  polymorphicdb:
+networks:
+  app-network:
+    driver: bridge
