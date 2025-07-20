@@ -13,7 +13,7 @@ docker-compose -f docker-compose.test.yml exec app-test rm -f /app/db/mydb.sqlit
 
 REM Run the unit tests from the test Dockerfile
 echo Running tests...
-docker-compose -f docker-compose.test.yml exec app-test dotnet test /app/AspNetCoreApi.Tests.csproj
+docker-compose -f docker-compose.test.yml exec app-test dotnet test /src/AspNetCoreApi.Tests.csproj
 
 REM Optionally, stop the containers after tests are done
 echo Stopping Docker Compose containers...

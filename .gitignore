@@ -51,3 +51,4 @@
 /obj/Debug/net9.0/ref/*.dll
 /obj/Debug/net9.0/refint/*.dll
 /obj
+/TestResults
