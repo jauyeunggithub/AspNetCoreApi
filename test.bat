@@ -24,7 +24,7 @@ docker-compose exec app dotnet ef database update --project /app/AspNetCoreApi/A
 
 REM Run the unit tests
 echo Running tests...
-docker-compose exec app dotnet test /app/AspNetCoreApi.Tests/AspNetCoreApi.Tests.csproj
+docker-compose exec app dotnet test /app/AspNetCoreApi.Tests.csproj
 
 REM Optionally, stop the containers after tests are done
 echo Stopping Docker Compose containers...

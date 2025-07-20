@@ -1,35 +1,44 @@
+# Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 WORKDIR /src
 
-# Step 2: Copy the project file and restore any dependencies
-COPY ["AspNetCoreApi.csproj", "AspNetCoreApi/"]
-RUN dotnet restore "AspNetCoreApi/AspNetCoreApi.csproj"
 
-# Step 3: Copy the rest of the source code into the container
+COPY ["AspNetCoreApi.csproj", "."]
+COPY ["AspNetCoreApi.Tests.csproj", "."]
+
+
+RUN dotnet restore "AspNetCoreApi.csproj"
+RUN dotnet restore "AspNetCoreApi.Tests.csproj"
+
 COPY . .
 
-# Step 4: Set the working directory to the app folder
-WORKDIR "/src/AspNetCoreApi"
-
-# Step 5: Build the application
+WORKDIR "/src"
 RUN dotnet build "AspNetCoreApi.csproj" -c Release -o /app/build
+RUN dotnet build "AspNetCoreApi.Tests.csproj" -c Release -o /app/tests_build
 
-# Step 6: Publish the app (with dependencies)
 FROM build AS publish
+WORKDIR "/src"
 RUN dotnet publish "AspNetCoreApi.csproj" -c Release -o /app/publish
 
-# Step 7: Use the official ASP.NET Core 9.0 runtime image for the final container
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
-# Set the working directory to /app
 WORKDIR /app
 
-# Step 8: Copy the app files from the publish stage
+RUN apt-get update && apt-get install -y curl --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
 COPY --from=publish /app/publish .
 
-# Expose port 80 for the app
+
+COPY --from=build /app/tests_build /app/bin/Release/net9.0/
+
+
+COPY ["AspNetCoreApi.Tests.csproj", "."]
+
+COPY ["Tests/", "Tests/"]
+
 EXPOSE 80
 
-# Step 9: Define the entry point to run the app
+ENV ASPNETCORE_URLS=http://+:80
+
 ENTRYPOINT ["dotnet", "AspNetCoreApi.dll"]
