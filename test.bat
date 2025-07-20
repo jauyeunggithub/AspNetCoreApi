@@ -1,31 +1,20 @@
 @echo off
 
+REM Clean up any old build artifacts
 dotnet clean
 
-REM Ensure that Docker Compose is running and rebuild containers
-echo Starting Docker Compose and rebuilding containers...
-docker-compose up --build -d
+REM Ensure that Docker Compose is running and rebuild containers with the test Dockerfile
+echo Starting Docker Compose with the test Dockerfile and rebuilding containers...
+docker-compose -f docker-compose.test.yml up --build -d
 
 REM Remove the existing SQLite database file (if it exists)
 echo Removing existing SQLite database file...
-docker-compose exec app rm -f /app/db/mydb.sqlite
+docker-compose -f docker-compose.test.yml exec app-test rm -f /app/db/mydb.sqlite
 
-REM Clean any old build artifacts before restoring dependencies
-echo Cleaning old build artifacts...
-docker-compose exec app rm -rf /app/AspNetCoreApi/bin /app/AspNetCoreApi/obj
-
-REM Install dependencies inside the container (for ASP.NET Core, this is done via 'dotnet restore')
-echo Restoring dependencies...
-docker-compose exec app dotnet restore /app/AspNetCoreApi/AspNetCoreApi.csproj
-
-REM Automatically run Entity Framework migrations
-echo Running migrations...
-docker-compose exec app dotnet ef database update --project /app/AspNetCoreApi/AspNetCoreApi.csproj
-
-REM Run the unit tests
+REM Run the unit tests from the test Dockerfile
 echo Running tests...
-docker-compose exec app dotnet test /app/AspNetCoreApi.Tests.csproj
+docker-compose -f docker-compose.test.yml exec app-test dotnet test /app/AspNetCoreApi.Tests.csproj
 
 REM Optionally, stop the containers after tests are done
 echo Stopping Docker Compose containers...
-docker-compose down
+docker-compose -f docker-compose.test.yml down

@@ -1,0 +1,17 @@
+services:
+  app-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    image: aspnetcoreapi-test:latest
+    volumes:
+      - .:/src
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Data Source=/app/db/mydb.sqlite
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

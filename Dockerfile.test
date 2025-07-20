@@ -1,0 +1,31 @@
+# Stage 1: Build the application and the test project
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+WORKDIR /src
+
+# Copy the .csproj files for both the main app and tests
+COPY ["AspNetCoreApi.csproj", "."]
+COPY ["AspNetCoreApi.Tests.csproj", "."]
+
+# Restore dependencies for both the main app and the tests project
+RUN dotnet restore "AspNetCoreApi.csproj"
+RUN dotnet restore "AspNetCoreApi.Tests.csproj"
+
+# Copy the rest of the source code into the container
+COPY . .
+
+# Build both the main application and the test project
+RUN dotnet build "AspNetCoreApi.Tests.csproj" -c Release -o /app/tests_build
+
+# Stage 2: Run the tests (this is the final stage for testing)
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS test
+
+WORKDIR /src
+
+COPY --from=build /app/tests_build /app/tests_build
+COPY --from=build /src/AspNetCoreApi.csproj /app/AspNetCoreApi.csproj
+COPY --from=build /src/AspNetCoreApi.Tests.csproj /app/AspNetCoreApi.Tests.csproj
+
+
+# Run the tests
+CMD ["dotnet", "test", "/src/AspNetCoreApi.Tests.csproj", "--logger", "trx;LogFileName=test_results.trx"]

@@ -1,8 +1,10 @@
+version: "3.9"
+
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.app
     image: aspnetcoreapi:latest
     ports:
       - "5000:80"
@@ -14,13 +16,12 @@ services:
       - ConnectionStrings__DefaultConnection=Data Source=/app/db/mydb.sqlite
     networks:
       - app-network
-    healthcheck: # Add healthcheck for the app service to determine readiness
-      test: ["CMD", "curl", "-f", "http://localhost/weatherforecast"] # Adjust to a suitable endpoint
-      interval: 10s # Check every 10 seconds
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/weatherforecast"] # Adjust this to a suitable endpoint
+      interval: 10s # Healthcheck every 10 seconds
       timeout: 5s # Wait up to 5 seconds for a response
-      retries: 5 # Retry 5 times before marking as unhealthy
-      start_period: 20s # Give the app 20 seconds to start up before health checks begin
-
+      retries: 5 # Retry up to 5 times before marking as unhealthy
+      start_period: 20s # Give the app 20 seconds to start up
 networks:
   app-network:
     driver: bridge
