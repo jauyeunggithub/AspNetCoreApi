@@ -20,6 +20,7 @@ public class EventControllerTests
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
     private readonly EventController _controller;
 
+
     public EventControllerTests()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -27,14 +28,21 @@ public class EventControllerTests
             .Options;
 
         _context = new ApplicationDbContext(options);
-        _controller = new EventController(_context);
+        _controller = new EventController(_context);  // Replace with the correct controller name
 
         // Mock the JWT Authentication in the HttpContext
         var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         mockHttpContextAccessor.Setup(m => m.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)).Returns("123");  // Mock user ID
+
+        // Mock the IServiceProvider to return IHttpContextAccessor
+        var mockServiceProvider = new Mock<IServiceProvider>();
+        mockServiceProvider.Setup(x => x.GetService(typeof(IHttpContextAccessor)))
+                           .Returns(mockHttpContextAccessor.Object);
+
+        // Set the HttpContext.RequestServices to be the mocked IServiceProvider
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext { RequestServices = mockHttpContextAccessor.Object }
+            HttpContext = new DefaultHttpContext { RequestServices = mockServiceProvider.Object }
         };
     }
 
