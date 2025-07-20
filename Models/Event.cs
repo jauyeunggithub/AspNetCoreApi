@@ -12,11 +12,11 @@ namespace AspNetCoreApi.Models
 
     public class ConferenceEvent : Event
     {
-        public string Location { get; set; }
+        public new string Location { get; set; }
     }
 
     public class WebinarEvent : Event
     {
-        public string Url { get; set; }
+        public new string Url { get; set; }
     }
 }

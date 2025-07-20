@@ -9,7 +9,6 @@ namespace AspNetCoreApi.Controllers
     using System.Threading.Tasks;            // For async Task
     using AspNetCoreApi.Data;                // For ApplicationDbContext
     using AspNetCoreApi.Models;              // Assuming your Event model is here
-    using Microsoft.EntityFrameworkCore;
 
     [Route("api/[controller]")]
     [ApiController]

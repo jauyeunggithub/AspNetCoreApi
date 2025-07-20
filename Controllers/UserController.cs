@@ -10,7 +10,6 @@ namespace AspNetCoreApi.Controllers
     using AspNetCoreApi.Data;                // For ApplicationDbContext
     using AspNetCoreApi.Models;              // Assuming your Event model is here
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
 
     [Route("api/[controller]")]
     [ApiController]
