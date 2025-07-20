@@ -7,7 +7,7 @@ using Moq;                                         // For creating mock objects
 using System.Threading.Tasks;                      // For async/await functionality in tests
 using Xunit;                                       // For Fact attribute and unit test framework
 using AspNetCoreApi.Controllers;                   // For UserController
-using AspNetCoreApi.Models;                        // For ApplicationUser (or any related model in your project)
+using AspNetCoreApi.Models;                        // For ApplicationUser (or any related model in your project
 using System;                                      // For handling system-level types like Exception and Task
 
 public class UserControllerTests
@@ -18,12 +18,25 @@ public class UserControllerTests
 
     public UserControllerTests()
     {
+        // Mock the IUserStore<ApplicationUser> dependency
         var store = new Mock<IUserStore<ApplicationUser>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
 
+        // Mock UserManager<ApplicationUser> constructor
+        _mockUserManager = new Mock<UserManager<ApplicationUser>>(store.Object,
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  null);
+
+        // Mock IHttpContextAccessor
         _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         _mockHttpContextAccessor.Setup(m => m.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)).Returns("123");  // Mock the user ID
 
+        // Initialize the UserController
         _controller = new UserController(_mockUserManager.Object);
 
         // Mock the IServiceProvider to return IHttpContextAccessor
@@ -43,6 +56,8 @@ public class UserControllerTests
     {
         // Arrange
         var user = new ApplicationUser { Id = "123", UserName = "testuser", Email = "test@domain.com" };
+
+        // Set up UserManager mock to return the user when calling FindByIdAsync
         _mockUserManager.Setup(m => m.FindByIdAsync("123")).ReturnsAsync(user);
 
         // Act
@@ -51,19 +66,20 @@ public class UserControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnValue = Assert.IsType<ApplicationUser>(okResult.Value);
-        Assert.Equal("testuser", returnValue.UserName);
+        Assert.Equal("testuser", returnValue.UserName);  // Validate that the returned user matches
     }
 
     [Fact]
     public async Task GetProfile_ReturnsNotFound_WhenUserDoesNotExist()
     {
         // Arrange
+        // Set up UserManager mock to return null when calling FindByIdAsync
         _mockUserManager.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((ApplicationUser)null);
 
         // Act
         var result = await _controller.GetProfile();
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result.Result);
+        Assert.IsType<NotFoundObjectResult>(result.Result);  // Ensure the result is NotFound
     }
 }

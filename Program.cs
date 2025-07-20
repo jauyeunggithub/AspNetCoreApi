@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using AspNetCoreApi.Data;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddOpenApi();  // Enable OpenAPI for the app
+builder.Services.AddOpenApi(); // Add OpenAPI for Swagger UI (ensure you have Swashbuckle.AspNetCore)
 
-// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -25,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Authorization policy
+// Add Authorization services
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ApiAccess", policy => policy.RequireAuthenticatedUser());
@@ -38,13 +40,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add Controllers
 builder.Services.AddControllers();
 
-// Build the app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();  // For OpenAPI in Development
+    app.MapOpenApi();  // For OpenAPI (Swagger) in Development
 }
 
 app.UseHttpsRedirection();
@@ -67,7 +68,6 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-// Start the application
 app.Run();
 
 // WeatherForecast record for sample data
