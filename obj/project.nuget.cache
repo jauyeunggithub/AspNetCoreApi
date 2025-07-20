@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "lDGxZ6x2y3g=",
+  "success": true,
+  "projectFilePath": "c:\\asp-net-core-api\\asp-net-core-api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Ho Hang Au Yeung\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.7\\microsoft.aspnetcore.openapi.9.0.7.nupkg.sha512",
+    "C:\\Users\\Ho Hang Au Yeung\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
