@@ -1,5 +1,3 @@
-// File: AspNetCoreApi.Tests/TestModels/ConcreteEvent.cs
-
 namespace AspNetCoreApi.Tests.TestModels
 {
     using AspNetCoreApi.Models;

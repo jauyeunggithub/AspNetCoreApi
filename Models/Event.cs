@@ -6,6 +6,8 @@ namespace AspNetCoreApi.Models
         public string Title { get; set; }
         public DateTime Date { get; set; }
         public string OwnerId { get; set; }
+        public string Location { get; set; }  // Add this property
+        public string Url { get; set; }       // Add this property
     }
 
     public class ConferenceEvent : Event

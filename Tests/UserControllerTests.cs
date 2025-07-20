@@ -1,14 +1,14 @@
-using System.Security.Claims;                        // For working with Claims in tests
-using Microsoft.AspNetCore.Http;                    // For IHttpContextAccessor and DefaultHttpContext
-using Microsoft.AspNetCore.Mvc;                    // For OkObjectResult, NotFoundObjectResult, ControllerContext, etc.
-using Microsoft.Extensions.Logging;                 // For logging (if needed in tests)
-using Microsoft.AspNetCore.Identity;                // For UserManager, IUserStore, ApplicationUser, etc.
-using Moq;                                          // For creating mock objects
-using System.Threading.Tasks;                       // For async/await functionality in tests
-using Xunit;                                        // For Fact attribute and unit test framework
-using AspNetCoreApi.Controllers;                    // For UserController
-using AspNetCoreApi.Models;                         // For ApplicationUser (or any related model in your project)
-using System;                                       // For handling system-level types like Exception and Task
+using System.Security.Claims;                      // For working with Claims in tests
+using Microsoft.AspNetCore.Http;                   // For IHttpContextAccessor and DefaultHttpContext
+using Microsoft.AspNetCore.Mvc;                   // For OkObjectResult, NotFoundObjectResult, ControllerContext, etc.
+using Microsoft.Extensions.Logging;                // For logging (if needed in tests)
+using Microsoft.AspNetCore.Identity;               // For UserManager, IUserStore, ApplicationUser, etc.
+using Moq;                                         // For creating mock objects
+using System.Threading.Tasks;                      // For async/await functionality in tests
+using Xunit;                                       // For Fact attribute and unit test framework
+using AspNetCoreApi.Controllers;                   // For UserController
+using AspNetCoreApi.Models;                        // For ApplicationUser (or any related model in your project)
+using System;                                      // For handling system-level types like Exception and Task
 
 public class UserControllerTests
 {
@@ -25,9 +25,16 @@ public class UserControllerTests
         _mockHttpContextAccessor.Setup(m => m.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)).Returns("123");  // Mock the user ID
 
         _controller = new UserController(_mockUserManager.Object);
+
+        // Mock the IServiceProvider to return IHttpContextAccessor
+        var mockServiceProvider = new Mock<IServiceProvider>();
+        mockServiceProvider.Setup(x => x.GetService(typeof(IHttpContextAccessor)))
+                           .Returns(_mockHttpContextAccessor.Object);
+
+        // Set the HttpContext.RequestServices to be the mocked IServiceProvider
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext() { RequestServices = _mockHttpContextAccessor.Object }
+            HttpContext = new DefaultHttpContext { RequestServices = mockServiceProvider.Object }
         };
     }
 
