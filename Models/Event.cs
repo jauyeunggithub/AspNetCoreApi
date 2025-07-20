@@ -5,13 +5,14 @@ namespace AspNetCoreApi.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public DateTime Date { get; set; }
-        public string OwnerId { get; set; }
-        public string Location { get; set; }  // Add this property
-        public string Url { get; set; }       // Add this property
+        public string OwnerId { get; set; } // This is your 'UserId' from previous errors
+        public string Location { get; set; } // This needs to be set up correctly
+        public string Url { get; set; }      // This is your 'Link' from previous errors
     }
 
     public class ConferenceEvent : Event
     {
+
         public new string Location { get; set; }
     }
 
