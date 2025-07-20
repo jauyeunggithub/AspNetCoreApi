@@ -50,3 +50,4 @@
 /obj/Debug/net9.0/*.exe
 /obj/Debug/net9.0/ref/*.dll
 /obj/Debug/net9.0/refint/*.dll
+/obj
